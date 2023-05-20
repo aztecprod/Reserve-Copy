@@ -5,6 +5,8 @@
 
 
 ![image](https://github.com/aztecprod/Reserve-Copy/assets/25949605/5e5a41fb-a0f5-4b76-9e18-15f7afe91d17)
+
+Конфигурация Сервера
 ```
 pid file = /var/run/rsyncd.pid
 log file = /var/log/rsyncd.log
@@ -22,6 +24,7 @@ comment = Data backup Dir
 auth users = backup
 secrets file = /etc/rsyncd.scrt
 ```
+Скрипт клиента
 ```
 #/bin/bash
 date
