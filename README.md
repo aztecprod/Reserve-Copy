@@ -43,6 +43,7 @@ echo "Finish backup ${srv_name}"
 После запуска скрипта:
 ![image](https://github.com/aztecprod/Reserve-Copy/assets/25949605/2a16a66d-8eed-4c93-b31b-c9b8f84cf129)
 Результат резервного копирования:
+
 ![image](https://github.com/aztecprod/Reserve-Copy/assets/25949605/735e5fdc-755a-498a-959b-0ac2e90a50e9)
 ![image](https://github.com/aztecprod/Reserve-Copy/assets/25949605/2342dcfa-f280-46c7-bdb2-dbe9a0d72c5f)
 
