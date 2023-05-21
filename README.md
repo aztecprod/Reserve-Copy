@@ -6,7 +6,87 @@
 
 ![image](https://github.com/aztecprod/Reserve-Copy/assets/25949605/fd61c66d-311e-42d0-b604-1edba867f339)
 
+Конфигурация bacula-sd.conf
+```
+Storage {                             # definition of myself
+  Name = debian2-sd
+  SDPort = 9103                  # Director's port
+  WorkingDirectory = "/var/lib/bacula"
+  Pid Directory = "/run/bacula"
+  Plugin Directory = "/usr/lib/bacula"
+  Maximum Concurrent Jobs = 20
+  SDAddress = 127.0.0.1
+}
 
+Director {
+  Name = debian2-dir
+  Password = "12345"
+}
+
+Director {
+  Name = debian2-mon
+  Password = "12345"
+  Monitor = yes
+}
+
+Autochanger {
+Name = Autochanger1
+Device = FileChgr1-Dev1, FileChgr1-Dev2
+Changer Command = ""
+Changer Device = /dev/null
+}
+
+Device {
+
+Name = FileChgr1-Dev1
+
+Media Type = File1
+
+Archive Device = /backups/files1
+
+LabelMedia = yes
+
+Random Access = Yes
+
+AutomaticMount = yes
+
+RemovableMedia = no
+
+AlwaysOpen = no
+
+Maximum Concurrent Jobs = 1
+
+}
+Device {
+
+Name = FileChgr1-Dev2
+
+Media Type = File1
+
+Archive Device = /backups/files2
+
+LabelMedia = yes
+
+Random Access = Yes
+
+AutomaticMount = yes
+
+RemovableMedia = no
+
+AlwaysOpen = no
+
+Maximum Concurrent Jobs = 1
+
+}
+
+Messages {
+
+Name = Standard
+
+director = dir-dir = all
+
+}
+```
 
 
 ![image](https://github.com/aztecprod/Reserve-Copy/assets/25949605/5e5a41fb-a0f5-4b76-9e18-15f7afe91d17)
