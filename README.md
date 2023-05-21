@@ -88,6 +88,179 @@ director = dir-dir = all
 }
 ```
 
+Конфигурация bacula-fd.conf
+```
+Director {
+  Name = debian2-dir
+  Password = "12345"
+}
+
+Director {
+  Name = debian2-mon
+  Password = "12345"
+  Monitor = yes
+}
+
+FileDaemon {                          # this is me
+  Name = debian2-fd
+  FDport = 9102                  # where we listen for the director
+  WorkingDirectory = /var/lib/bacula
+  Pid Directory = /run/bacula
+  Maximum Concurrent Jobs = 20
+  Plugin Directory = /usr/lib/bacula
+  FDAddress = 127.0.0.1
+}
+
+# Send all messages except skipped files back to Director
+Messages {
+  Name = Standard
+  director = debian2-dir = all, !skipped, !restored
+}
+```
+
+Конфигурация bacula-dir.conf
+
+```
+Director {
+
+Name = debian2-dir
+DIRport = 9101
+QueryFile = "/etc/bacula/scripts/query.sql"
+WorkingDirectory = "/var/lib/bacula"
+PidDirectory = "/run/bacula"
+Maximum Concurrent Jobs = 1
+Password = "12345"
+Messages = Daemon
+DirAddress = 127.0.0.1
+
+}
+
+
+
+Catalog {
+Name = BaculaCatalog
+DB Address = "127.0.0.1"
+DB PORT = "5432"
+dbname = "bacula"
+dbuser = "bacula"
+dbpassword = "12345"
+
+}
+
+FileSet {
+
+Name = "Full Set"
+Include {
+Options {
+signature = MD5
+Compression = GZIP
+aclsupport = yes
+xattrsupport = yes
+
+}
+
+File = /var/lib/bacula/bacula.sql
+
+}
+
+}
+
+Client {
+
+Name = debian2-fd
+Address = 127.0.0.1
+FDPort = 9102
+Catalog = BaculaCatalog
+Password = "12345"
+File Retention = 60 days
+Job Retention = 6 months
+AutoPrune = yes
+
+}
+
+Schedule {
+Name = "WeeklyCycle"
+Run = Full sun-sat at 23:10
+}
+
+JobDefs {
+Name = "DefaultJob"
+Type = Backup
+Level = Incremental
+Client = debian2-fd
+FileSet = "Full Set"
+Schedule = "WeeklyCycle"
+Storage = debian2-sd
+Messages = Standard
+Pool = File
+SpoolAttributes = yes
+Priority = 10
+Write Bootstrap = "/var/lib/bacula/%c.bsr"
+
+}
+
+
+
+Storage {
+Name = debian2-sd
+Address = 127.0.0.1
+SDPort = 9103
+Password = "12345"
+Device = Autochanger1
+Media Type = File1
+Maximum Concurrent Jobs = 1
+}
+
+
+
+Pool {
+
+Name = File
+Pool Type = Backup
+Recycle = yes
+Volume Retention = 365 days
+AutoPrune = yes
+Maximum Volume Bytes = 50G
+Maximum Volumes = 100
+Label Format = "Vol-"
+
+}
+
+
+Messages {
+
+Name = Standard
+mailcommand = "/usr/sbin/bsmtp -h localhost -f \"\(Bacula\) \<%r\>\" -s \"Bacula: %t %e of %c %l\" %r"
+operatorcommand = "/usr/sbin/bsmtp -h localhost -f \"\(Bacula\) \<%r\>\" -s \"Bacula: Intervention needed for %j\" %r"
+mail = root = all, !skipped
+operator = root = mount
+console = all, !skipped, !saved
+append = "/var/log/bacula/bacula.log" = all, !skipped
+catalog = all
+
+}
+
+
+Messages {
+
+Name = Daemon
+mailcommand = "/usr/sbin/bsmtp -h localhost -f \"\(Bacula\) \<%r\>\" -s \"Bacula daemon message\" %r"
+mail = root = all, !skipped
+console = all, !skipped, !saved
+append = "/var/log/bacula/bacula.log" = all, !skipped
+
+}
+
+Job {
+
+Name = "BackupClient1"
+JobDefs = "DefaultJob"
+
+}
+```
+![image](https://github.com/aztecprod/Reserve-Copy/assets/25949605/b3aee853-0367-4eb2-949b-763a3aed4f50)
+![image](https://github.com/aztecprod/Reserve-Copy/assets/25949605/c154ce4f-921b-4253-8105-08a47e44292b)
+
 
 ![image](https://github.com/aztecprod/Reserve-Copy/assets/25949605/5e5a41fb-a0f5-4b76-9e18-15f7afe91d17)
 
